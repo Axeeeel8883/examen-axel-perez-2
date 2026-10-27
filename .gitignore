@@ -3,5 +3,7 @@
 **/build/
 local.properties
 .idea/
+*.iml
 data/
 debug.keystore
+*.log

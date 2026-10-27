@@ -1,0 +1,44 @@
+CREATE TABLE lote (
+ id INTEGER NOT NULL PRIMARY KEY, codigo TEXT NOT NULL, nombre TEXT NOT NULL,
+ hectareas REAL NOT NULL, cultivo TEXT NOT NULL, valle TEXT NOT NULL,
+ campaniaCerrada INTEGER NOT NULL, dosisMaxima REAL NOT NULL
+);
+CREATE TABLE labor (
+ id INTEGER NOT NULL PRIMARY KEY, loteId INTEGER NOT NULL, tipo TEXT NOT NULL,
+ fecha TEXT NOT NULL, responsable TEXT NOT NULL, cantidad REAL NOT NULL,
+ observacion TEXT NOT NULL, pendiente INTEGER NOT NULL,
+ registradoEn TEXT NOT NULL DEFAULT '', operacion TEXT NOT NULL DEFAULT 'CREAR',
+ claveCliente TEXT NOT NULL DEFAULT ''
+);
+CREATE TABLE metadato (clave TEXT NOT NULL PRIMARY KEY, valor TEXT NOT NULL);
+observarLotes:
+SELECT * FROM lote WHERE (:valle = '' OR valle = :valle)
+ AND (:soloAbiertas = 0 OR campaniaCerrada = 0)
+ AND (nombre LIKE '%' || :buscar || '%' OR codigo LIKE '%' || :buscar || '%') ORDER BY codigo;
+observarLaboresPorLote:
+SELECT * FROM labor WHERE loteId = ? AND operacion != 'ELIMINAR' ORDER BY fecha DESC, id DESC;
+siguienteIdLocal:
+SELECT COALESCE(MIN(id),0) FROM labor;
+pendientes:
+SELECT * FROM labor WHERE pendiente = 1 ORDER BY id;
+contarPendientes:
+SELECT COUNT(*) FROM labor WHERE loteId = ? AND pendiente = 1;
+insertarLote:
+INSERT OR REPLACE INTO lote VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+insertarLabor:
+INSERT OR REPLACE INTO labor VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+borrarLabor:
+DELETE FROM labor WHERE id = ?;
+limpiarSincronizadas:
+DELETE FROM labor WHERE pendiente = 0;
+limpiarLotes:
+DELETE FROM lote;
+leerMeta:
+SELECT valor FROM metadato WHERE clave = ?;
+guardarMeta:
+INSERT OR REPLACE INTO metadato VALUES (?, ?);
+vaciarLabores:
+DELETE FROM labor;
+vaciarMeta:
+DELETE FROM metadato;
+
