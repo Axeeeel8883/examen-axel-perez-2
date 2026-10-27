@@ -9,7 +9,7 @@ import pe.upeu.agrosierra.domain.usecase.*
 data class UiState(val iniciando:Boolean=true,val cargando:Boolean=false,val operacion:Boolean=false,
  val lotes:List<Lote> = emptyList(),val labores:List<Labor> = emptyList(),val seleccionado:Lote?=null,
  val mensaje:String="",val fallo:ErrorApi?=null,val campos:Map<String,String> = emptyMap(),val ultima:String="Nunca",
- val valle:String="",val buscar:String="",val perfil:Boolean=false,val editor:Boolean=false,val editando:Labor?=null)
+ val valle:String="",val buscar:String="",val soloAbiertas:Boolean=false,val perfil:Boolean=false,val editor:Boolean=false,val editando:Labor?=null)
 sealed interface FaseLista {
  data object Cargando:FaseLista
  data object Vacia:FaseLista
@@ -31,8 +31,9 @@ class AgroViewModel(val repo:AgroRepository,val sincronizar:SincronizarUseCase,v
   viewModelScope.launch{repo.ultimaSync.collect{u->_estado.update{it.copy(ultima=u)}}}
   viewModelScope.launch{try{repo.restaurar()}catch(e:FalloApi){error(e)}finally{_estado.update{it.copy(iniciando=false)}};if(sesion.value!=null)sync()}
  }
- private fun observar(){lista?.cancel();lista=viewModelScope.launch{val s=_estado.value;repo.observarLotes(s.valle,s.buscar).collect{l->_estado.update{it.copy(lotes=l,seleccionado=it.seleccionado?.let{anterior->l.find{x->x.id==anterior.id}?:anterior})}}}}
+ private fun observar(){lista?.cancel();lista=viewModelScope.launch{val s=_estado.value;repo.observarLotes(s.valle,s.buscar,s.soloAbiertas).collect{l->_estado.update{it.copy(lotes=l,seleccionado=it.seleccionado?.let{anterior->l.find{x->x.id==anterior.id}?:anterior})}}}}
  fun filtros(v:String,b:String){_estado.update{it.copy(valle=v,buscar=b)};observar()}
+ fun soloAbiertas(valor:Boolean){_estado.update{it.copy(soloAbiertas=valor)};observar()}
  fun seleccionar(l:Lote){_estado.update{it.copy(seleccionado=l,mensaje="",perfil=false)};detalle?.cancel();detalle=viewModelScope.launch{repo.observarLabores(l.id).collect{lab->_estado.update{it.copy(labores=lab)}}}}
  fun volver(){_estado.update{it.copy(seleccionado=null,perfil=false,editor=false,mensaje="")}}
  fun perfil(){_estado.update{it.copy(perfil=true,mensaje="")}}

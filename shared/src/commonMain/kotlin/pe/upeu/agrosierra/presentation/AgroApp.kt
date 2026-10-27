@@ -33,6 +33,10 @@ import pe.upeu.agrosierra.domain.usecase.puedeEditarLabor
     Text("Última sincronización: ${s.ultima}",style=MaterialTheme.typography.bodySmall)
     OutlinedTextField(s.buscar,{vm.filtros(s.valle,it)},label={Text("Buscar nombre o código")},modifier=Modifier.fillMaxWidth())
     OutlinedTextField(s.valle,{vm.filtros(it,s.buscar)},label={Text("Valle (vacío: todos)")},modifier=Modifier.fillMaxWidth())
+    Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {
+     Checkbox(checked=s.soloAbiertas,onCheckedChange=vm::soloAbiertas)
+     Text("Solo campañas abiertas")
+    }
     if(s.cargando)CircularProgressIndicator()
     if(s.lotes.isEmpty() && !s.cargando){
      Text("No hay lotes guardados con estos filtros",modifier=Modifier.padding(16.dp))

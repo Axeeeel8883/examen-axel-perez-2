@@ -40,6 +40,18 @@ class RepositorioTest {
   try{val r=AgroRepositorioOffline(AgroApi(c),base,seguro,reloj);r.restaurar();r.sincronizar();assertTrue(rutas.indexOf("POST /api/v1/labores")<rutas.indexOf("GET /api/v1/lotes"));assertEquals(10L,r.observarLabores(1).first().single().id);assertTrue(base.pendientes().isEmpty())}finally{c.close();base.db.closePrueba()}
  }
  @Test fun idsNegativosDistintos(){val b=basePrueba();try{b.guardar(labor().copy(id=b.idLocal()));b.guardar(labor().copy(id=b.idLocal()));assertEquals(setOf(-1L,-2L),b.pendientes().map{it.labor.id}.toSet())}finally{b.db.closePrueba()}}
+ @Test fun filtroAbiertasCombinaValleYBusqueda()=runTest{
+  val b=basePrueba()
+  try {
+   b.guardar(Lote(1,"MT-01","Parcela Norte",2.0,"Papa","Mantaro",false,2.0))
+   b.guardar(Lote(2,"MT-02","Parcela Sur",3.0,"Maíz","Mantaro",true,2.0))
+   b.guardar(Lote(3,"CL-01","Parcela Norte",1.0,"Papa","Colca",false,2.0))
+   assertEquals(listOf(1L),b.lotes("Mantaro","Parcela",true).first().map{it.id})
+   assertEquals(listOf(1L,2L),b.lotes("Mantaro","Parcela",false).first().map{it.id})
+   assertTrue(b.lotes("Mantaro","MT-02",true).first().isEmpty())
+   assertEquals(listOf(3L),b.lotes("Colca","Norte",true).first().map{it.id})
+  }finally{b.db.closePrueba()}
+ }
  @Test fun filtroLocalFuncionaSinRed()=runTest{val b=basePrueba();try{b.guardar(Lote(1,"A","Papa",1.0,"Papa","Mantaro",false,2.0));b.guardar(Lote(2,"B","Maíz",1.0,"Maíz","Colca",true,2.0));assertEquals(1,b.lotes("Mantaro","A",true).first().size)}finally{b.db.closePrueba()}}
 }
 // El driver pertenece al fixture y se cierra al terminar cada prueba.
