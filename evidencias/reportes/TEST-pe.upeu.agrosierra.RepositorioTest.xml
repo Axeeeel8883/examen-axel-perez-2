@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="pe.upeu.agrosierra.RepositorioTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-27T19:58:48" hostname="FIA-LSOFA3" time="1.522">
+  <properties />
+  <testcase name="filtroAbiertasCombinaValleYBusqueda[jvm]" classname="pe.upeu.agrosierra.RepositorioTest" time="0.695" />
+  <testcase name="filtroLocalFuncionaSinRed[jvm]" classname="pe.upeu.agrosierra.RepositorioTest" time="0.01" />
+  <testcase name="traduccionError[jvm]" classname="pe.upeu.agrosierra.RepositorioTest" time="0.024" />
+  <testcase name="subirAntesDeBajar[jvm]" classname="pe.upeu.agrosierra.RepositorioTest" time="0.661" />
+  <testcase name="idsNegativosDistintos[jvm]" classname="pe.upeu.agrosierra.RepositorioTest" time="0.004" />
+  <testcase name="registrarSinRed[jvm]" classname="pe.upeu.agrosierra.RepositorioTest" time="0.122" />
+  <testcase name="conversionDto[jvm]" classname="pe.upeu.agrosierra.RepositorioTest" time="0.0" />
+  </testsuite>
